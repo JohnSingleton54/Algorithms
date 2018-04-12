@@ -1,5 +1,5 @@
 // John M. Singleton
-// W 4/11/18
+// started:  W 4/11/18, last revision:  R 4/12/18
 // CSCI 532
 // Project
 // the Knuth-Morris-Pratt (KMP) Algorithm
@@ -14,8 +14,18 @@ public class KMP {
 	
 		BufferedReader reader = new BufferedReader( new InputStreamReader( System.in ) );
 		System.out.print( "Enter a pattern to search for:  ");
-		String pattern = reader.readLine();
-		System.out.println( pattern );
+		String input_pattern = reader.readLine();
+		// The flowchart representation uses two arrays.  One contains the characters of the
+		// pattern (pattern), and the other contains the failure links (fail).
+		char [] pattern = input_pattern.toCharArray();
+		int m = pattern.length;
+		int [] fail = new int [ m ];
+		
+		constructFlowchart( pattern, m, fail );
+		for( int i = 0; i < m; i++) {
+			System.out.println( fail[i] );
+		}
+		
 		
 		// The following code is from another program, but it may help me input the text.
 /*		String fileName = "KMP_InputFile.txt";
@@ -35,12 +45,24 @@ public class KMP {
 		System.out.println( Arrays.toString( poly1 ) );
 		System.out.println( Arrays.toString( poly2 ) );
 		}
-		catch( IOException e ) { System.err.println( e ); }
+		catch( IOException e ) { System.err.println( e ); }*/
 	}
 	
 	// The following method constructs the KMP flowchart.
-	public static void flowchart() {
-*/		
+	// *** The following method has a bug.  It is not correctly constructing the flowchart for
+	// pattern ABABABCB.  (See Figure 11.6 on p. 492.)
+	public static void constructFlowchart( char [] pattern, int m, int [] fail ) {
+		int k, s;
+		fail[0] = -1;
+		for( k = 1; k < m; k++ ) {
+			s = fail[k-1];
+			while( s >= 1 ) {
+				if( pattern[s] == pattern[k-1] )
+				    break;
+				s = fail[s];
+			}
+			fail[k] = s + 1;
+		}	
 	}
 }
 
