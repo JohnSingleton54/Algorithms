@@ -1,5 +1,5 @@
 // John M. Singleton
-// started:  W 4/11/18, last revision:  Sa 4/14/18
+// started:  W 4/11/18, last revision:  Sa 4/21/18
 // CSCI 532
 // Project
 // the Knuth-Morris-Pratt (KMP) Algorithm
@@ -26,21 +26,28 @@ public class KMP {
 			System.out.println( fail[i] );
 		}
 		
-		
 		String fileName = "KMP_InputFile.txt";
-		// ArrayList - See pp. 229-232 of Lewis and Loftus 9e.  An ArrayList stores references to
-		// objects, not primitive values.  So I had to use the wrapper class Character instead of
-		// the primitive type char.
 		ArrayList<Character> text = new ArrayList<Character>();
 		try { Scanner sc = new Scanner( new File( fileName ) );
 		String characters = sc.next();
 		for( int i = 0; i < characters.length(); i++) {
 			text.add( i, characters.charAt( i ) );		
 		}
-		int n = text.size();
+		
+		/*int n = text.size();
 		for( int i = 0; i < n; i++ ) {
 			System.out.println( text.get( i ) );
+		}*/
+		
+		int match = kmpScan( pattern, text, m, fail );
+		
+		if( match == -1 ) {
+			System.out.println( "No match was found." );
 		}
+		else {
+			System.out.println( "A match was found at index " + match + " ." );
+		}
+		
 		}
 		catch( IOException e ) { System.err.println( e ); }
 	}
@@ -60,6 +67,34 @@ public class KMP {
 			}
 			fail[k] = s + 1;
 		}	
+	}
+	
+	public static int kmpScan( char [] pattern, ArrayList<Character> text, int m, int [] fail ) {
+	    int match = -1;
+		int j = 0;  // j indexes text characters
+		int k = 0;  // k indexes the pattern and fail array
+		while( j < text.size() ) {
+			System.out.println( "Noomi Rapace is hot!" + j + k );
+			if( k == -1 ) {
+				j++;
+				k = 0;  // Start at the beginning of the pattern.
+			}
+			else if( text.get( j ) == pattern[ k ] ) {
+				j++;
+				k++;
+				// I moved the following four lines of code from the beginning of the while loop to
+				// here in order to fix this bug:  No match is being found when the pattern is at
+				// the very end of the text.  (cf. Algorithm 3 on p. 494 of Baase and Gelder.)
+				if( k == m ) {
+				    match = j - m;  // If we get here, then a match has been found!
+				    break;
+			    }
+			}
+			else {
+				k = fail[ k ];  // Follow the fail arrow.
+			}
+		}
+        return match;
 	}
 }
 
